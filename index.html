@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drafting Laws for AI in the Workplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E5E7EB; /* gray-200 */
+        }
+        .hero-canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        .glow-text {
+            text-shadow: 0 0 8px rgba(255, 255, 0, 0.6);
+        }
+        .content-container {
+            max-width: 800px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+
+    <div class="relative w-full h-full">
+        <!-- Animated Background -->
+        <div id="hero-canvas-container" class="hero-canvas-container"></div>
+
+        <!-- Main Content -->
+        <main class="relative z-10 flex flex-col items-start content-container mx-auto space-y-12 sm:space-y-16 py-16">
+            
+            <!-- Header Section -->
+            <header class="w-full">
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+                    Drafting Laws <span class="text-yellow-300 glow-text">Around AI</span> in the <span class="text-white">Workplace</span>
+                </h1>
+                <p class="text-sm sm:text-base text-gray-400 mt-2 tracking-wider">A WAYS OF THINKING X PERSPECTIVES WORKSHOP</p>
+                <p class="text-sm sm:text-base text-gray-400 mt-1 tracking-wider">BY ADITYA</p>
+            </header>
+
+            <!-- Body Content -->
+            <div class="w-full space-y-10 sm:space-y-12">
+                <blockquote class="text-2xl sm:text-3xl md:text-4xl font-light italic text-gray-200 border-l-4 border-gray-600 pl-4 sm:pl-6">
+                    “What If AI Tools Could Only Be Used By People Over 50”
+                </blockquote>
+
+                <div>
+                    <p class="text-lg sm:text-xl font-bold text-cyan-400 mb-2">AUG 23</p>
+                    <p class="text-base sm:text-lg text-gray-300 leading-relaxed">
+                        As we move into a disruptive era playing catch-up with new tools, our workplaces and workflows are evolving at the speed of the sun. This micro-site is dedicated to some of the cool insights and conversations we initiated as 14 people from different facets of the workforce. Stay tuned as I try to synthesize our perspectives into a few concise fictional laws that govern our usage around emerging tech.
+                    </p>
+                </div>
+
+                <div class="pt-4">
+                    <p class="text-3xl sm:text-4xl font-extrabold text-green-400 tracking-wide">
+                        STAY TUNED!
+                    </p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Three.js animation script
+        let scene, camera, renderer, lines;
+        const lineCount = 50;
+        const material = new THREE.LineBasicMaterial({ color: 0x222222 });
+
+        function init() {
+            const container = document.getElementById('hero-canvas-container');
+            
+            // Scene
+            scene = new THREE.Scene();
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            // Lines
+            const group = new THREE.Group();
+            for (let i = 0; i < lineCount; i++) {
+                const points = [];
+                const amplitude = Math.random() * 2 + 1;
+                const frequency = Math.random() * 0.5 + 0.1;
+                const yOffset = (Math.random() - 0.5) * 8;
+
+                for (let j = 0; j < 100; j++) {
+                    const x = (j / 99) * 20 - 10;
+                    const y = Math.sin(x * frequency + i) * amplitude + yOffset;
+                    const z = (Math.random() - 0.5) * 2;
+                    points.push(new THREE.Vector3(x, y, z));
+                }
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const line = new THREE.Line(geometry, material);
+                group.add(line);
+            }
+            lines = group;
+            scene.add(lines);
+
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('mousemove', onMouseMove, false);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('hero-canvas-container');
+            if(container) {
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            }
+        }
+        
+        function onMouseMove(event) {
+            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            if (lines) {
+                lines.rotation.y = mouseX * 0.2;
+                lines.rotation.x = mouseY * 0.2;
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (lines) {
+                const time = Date.now() * 0.0001;
+                lines.children.forEach((line, i) => {
+                    const positions = line.geometry.attributes.position.array;
+                    const originalAmplitude = line.userData.amplitude || (Math.random() * 2 + 1);
+                    const originalFrequency = line.userData.frequency || (Math.random() * 0.5 + 0.1);
+                    if (!line.userData.amplitude) line.userData.amplitude = originalAmplitude;
+                    if (!line.userData.frequency) line.userData.frequency = originalFrequency;
+
+                    for (let j = 0; j < positions.length; j += 3) {
+                        const x = positions[j];
+                        positions[j + 1] = Math.sin(x * originalFrequency + time * (i * 0.1 + 1)) * originalAmplitude + line.geometry.attributes.position.array[j+1];
+                    }
+                    line.geometry.attributes.position.needsUpdate = true;
+                });
+                lines.rotation.z += 0.0002;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Wait for the DOM to be fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', (event) => {
+            init();
+            animate();
+        });
+    </script>
+</body>
+</html>
